@@ -5,7 +5,7 @@ import 'package:catalogo_produto_poc/app/core/ui/messages.dart';
 import 'package:catalogo_produto_poc/app/core/models/produto.dart';
 import 'package:catalogo_produto_poc/app/core/ui/theme_extensions.dart';
 import 'package:catalogo_produto_poc/app/core/constants/rotas.dart';
-import 'package:catalogo_produto_poc/app/modules/carrinho/cubit/carrinho_controller.dart';
+import 'package:catalogo_produto_poc/app/modules/carrinho/store/carrinho_store.dart';
 
 class ProdutoGridItem extends StatefulWidget {
   final Produto _produto;
@@ -26,7 +26,7 @@ class _ProdutoGridItemState extends State<ProdutoGridItem> {
       decimalDigits: 2,
     );
 
-    final carrinho = context.read<CarrinhoController>();
+    final carrinho = context.read<CarrinhoStore>();
 
     return ClipRRect(
       borderRadius: BorderRadius.circular(5),

@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:catalogo_produto_poc/app/core/ui/theme_extensions.dart';
 import 'package:catalogo_produto_poc/app/modules/carrinho/page/carrinho_item.dart';
-import 'package:catalogo_produto_poc/app/modules/carrinho/cubit/carrinho_controller.dart';
+import 'package:catalogo_produto_poc/app/modules/carrinho/store/carrinho_store.dart';
 
 class CarrinhoPage extends StatelessWidget {
   const CarrinhoPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final carrinhoController = Provider.of<CarrinhoController>(context);
-    final items = carrinhoController.items.values.toList();
+    final carrinhoStore = Provider.of<CarrinhoStore>(context);
+    final items = carrinhoStore.items.toList();
 
     return Scaffold(
       body: Column(
@@ -19,12 +19,12 @@ class CarrinhoPage extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(15),
             child: Text(
-              carrinhoController.items.isEmpty ? '' : 'Carrinho de Compras',
+              carrinhoStore.items.isEmpty ? '' : 'Carrinho de Compras',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
           ),
 
-          carrinhoController.items.isEmpty
+          carrinhoStore.items.isEmpty
               ? Expanded(
                   child: Center(
                     child: Column(
@@ -68,13 +68,13 @@ class CarrinhoPage extends StatelessWidget {
                   Chip(
                     backgroundColor: context.secondaryColor,
                     label: Text(
-                      'R\$${carrinhoController.valorTotal.toStringAsFixed(2)}',
+                      'R\$${carrinhoStore.valorTotal.toStringAsFixed(2)}',
                       style: const TextStyle(color: Colors.white),
                     ),
                   ),
                   const Spacer(),
 
-                  CartButton(cart: carrinhoController),
+                  CartButton(cart: carrinhoStore),
                 ],
               ),
             ),
@@ -88,7 +88,7 @@ class CarrinhoPage extends StatelessWidget {
 class CartButton extends StatefulWidget {
   const CartButton({super.key, required this.cart});
 
-  final CarrinhoController cart;
+  final CarrinhoStore cart;
 
   @override
   State<CartButton> createState() => _CartButtonState();

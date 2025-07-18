@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:catalogo_produto_poc/app/core/widget/widget_drawer.dart';
 import 'package:catalogo_produto_poc/app/core/widget/widget_about_page.dart';
 import 'package:catalogo_produto_poc/app/modules/produto/page/produto_page.dart';
 import 'package:catalogo_produto_poc/app/modules/carrinho/page/carrinho_badgee.dart';
 import 'package:catalogo_produto_poc/app/modules/carrinho/page/carrinho_page.dart';
-import 'package:catalogo_produto_poc/app/modules/carrinho/cubit/carrinho_controller.dart';
-import 'package:catalogo_produto_poc/app/modules/carrinho/cubit/carrinho_state.dart';
+import 'package:catalogo_produto_poc/app/modules/carrinho/store/carrinho_store.dart';
 import 'package:catalogo_produto_poc/app/modules/usuario/cubit/usuario_controller.dart';
 
 class HomePage extends StatefulWidget {
@@ -50,16 +51,21 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
         actions: <Widget>[
-          BlocConsumer<CarrinhoController, CarrinhoState>(
-            listener: (context, state) {
-              if (state.error != null && state.error!.isNotEmpty) {
-                ScaffoldMessenger.of(
-                  context,
-                ).showSnackBar(SnackBar(content: Text(state.error!)));
+          Observer(
+            builder: (context) {
+              final carrinhoStore = context.read<CarrinhoStore>();
+
+              // Mostrar erro se houver
+              if (carrinhoStore.error != null &&
+                  carrinhoStore.error!.isNotEmpty) {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  ScaffoldMessenger.of(
+                    context,
+                  ).showSnackBar(SnackBar(content: Text(carrinhoStore.error!)));
+                });
               }
-            },
-            builder: (context, state) {
-              final quantidade = state.items.length;
+
+              final quantidade = carrinhoStore.items.length;
               return IconButton(
                 onPressed: () {
                   _selectedPageIndex = 2;
@@ -111,16 +117,21 @@ class _HomePageState extends State<HomePage> {
                 ),
                 BottomNavigationBarItem(
                   backgroundColor: Theme.of(context).colorScheme.primary,
-                  icon: BlocConsumer<CarrinhoController, CarrinhoState>(
-                    listener: (context, state) {
-                      if (state.error != null && state.error!.isNotEmpty) {
-                        ScaffoldMessenger.of(
-                          context,
-                        ).showSnackBar(SnackBar(content: Text(state.error!)));
+                  icon: Observer(
+                    builder: (context) {
+                      final carrinhoStore = context.read<CarrinhoStore>();
+
+                      // Mostrar erro se houver
+                      if (carrinhoStore.error != null &&
+                          carrinhoStore.error!.isNotEmpty) {
+                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text(carrinhoStore.error!)),
+                          );
+                        });
                       }
-                    },
-                    builder: (context, state) {
-                      final quantidade = state.items.length;
+
+                      final quantidade = carrinhoStore.items.length;
                       return quantidade > 0
                           ? Badgee(
                               value: quantidade.toString(),
