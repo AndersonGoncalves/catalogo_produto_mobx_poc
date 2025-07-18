@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:catalogo_produto_poc/app/app_widget.dart';
-import 'package:catalogo_produto_poc/app/modules/usuario/cubit/usuario_controller.dart';
+import 'package:catalogo_produto_poc/app/modules/usuario/store/usuario_store.dart';
 import 'package:catalogo_produto_poc/app/services/usuario/usuario_service_impl.dart';
 import 'package:catalogo_produto_poc/app/services/produto/produto_service_impl.dart';
 import 'package:catalogo_produto_poc/app/modules/produto/store/produto_store.dart';
@@ -20,7 +20,7 @@ class AppProvider extends StatelessWidget {
     return MultiProvider(
       providers: [
         //Usuario
-        Provider<UsuarioController>(
+        Provider<UsuarioStore>(
           create: (context) {
             final usuarioRepository = UsuarioRepositoryImpl(
               firebaseAuth: FirebaseAuth.instance,
@@ -28,7 +28,7 @@ class AppProvider extends StatelessWidget {
             final usuarioService = UsuarioServiceImpl(
               usuarioRepository: usuarioRepository,
             );
-            return UsuarioController(usuarioService: usuarioService);
+            return UsuarioStore(usuarioService: usuarioService);
           },
         ),
 

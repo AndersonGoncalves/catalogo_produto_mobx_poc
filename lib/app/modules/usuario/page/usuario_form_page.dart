@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:provider/provider.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'package:catalogo_produto_poc/app/core/ui/messages.dart';
 import 'package:catalogo_produto_poc/app/core/widget/widget_loading_page.dart';
 import 'package:catalogo_produto_poc/app/core/widget/widget_text_form_field.dart';
 import 'package:catalogo_produto_poc/app/core/widget/widget_text_button.dart';
-import 'package:catalogo_produto_poc/app/modules/usuario/cubit/usuario_controller.dart';
-import 'package:catalogo_produto_poc/app/modules/usuario/cubit/usuario_state.dart';
+import 'package:catalogo_produto_poc/app/modules/usuario/store/usuario_store.dart';
 
 enum AuthMode { signup, login }
 
@@ -47,7 +47,7 @@ class UsuariohFormPageState extends State<UsuarioFormPage>
 
     if (formValid) {
       _formKey.currentState?.save();
-      UsuarioController usuarioController = context.read<UsuarioController>();
+      UsuarioStore usuarioController = context.read<UsuarioStore>();
 
       if (_isLogin) {
         await usuarioController.login(
@@ -75,7 +75,7 @@ class UsuariohFormPageState extends State<UsuarioFormPage>
     if (widget.usuarioAnonimo) {
       Navigator.of(context).pop();
     } else {
-      UsuarioController usuarioController = context.read<UsuarioController>();
+      UsuarioStore usuarioController = context.read<UsuarioStore>();
       await usuarioController.loginAnonimo();
     }
   }
@@ -106,17 +106,24 @@ class UsuariohFormPageState extends State<UsuarioFormPage>
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<UsuarioController, UsuarioState>(
-      listener: (context, state) {
-        if (state.success) {
-          Navigator.of(context).pop();
-        } else if (state.error != null && state.error!.isNotEmpty) {
-          Messages.of(context).showError(state.error!);
-        }
-      },
-      builder: (context, state) {
+    return Observer(
+      builder: (context) {
+        final usuarioStore = context.read<UsuarioStore>();
+
+        // Listener para ações de sucesso e erro
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (usuarioStore.success) {
+            usuarioStore.clearSuccess();
+            Navigator.of(context).pop();
+          } else if (usuarioStore.error != null &&
+              usuarioStore.error!.isNotEmpty) {
+            Messages.of(context).showError(usuarioStore.error!);
+            usuarioStore.clearError();
+          }
+        });
+
         return Scaffold(
-          body: state.isLoading
+          body: usuarioStore.isLoading
               ? WidgetLoadingPage(
                   label: 'Carregando...',
                   labelColor: Colors.white,
@@ -367,7 +374,7 @@ class UsuariohFormPageState extends State<UsuarioFormPage>
                                                           onPressed: () {
                                                             context
                                                                 .read<
-                                                                  UsuarioController
+                                                                  UsuarioStore
                                                                 >()
                                                                 .googleLogin();
                                                           },
@@ -381,9 +388,7 @@ class UsuariohFormPageState extends State<UsuarioFormPage>
                                                     'Esqueceu a senha?',
                                                     onPressed: () async {
                                                       await context
-                                                          .read<
-                                                            UsuarioController
-                                                          >()
+                                                          .read<UsuarioStore>()
                                                           .esqueceuSenha(
                                                             _emailController
                                                                 .text,

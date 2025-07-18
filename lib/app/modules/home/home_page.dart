@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:catalogo_produto_poc/app/core/widget/widget_drawer.dart';
 import 'package:catalogo_produto_poc/app/core/widget/widget_about_page.dart';
@@ -8,7 +7,7 @@ import 'package:catalogo_produto_poc/app/modules/produto/page/produto_page.dart'
 import 'package:catalogo_produto_poc/app/modules/carrinho/page/carrinho_badgee.dart';
 import 'package:catalogo_produto_poc/app/modules/carrinho/page/carrinho_page.dart';
 import 'package:catalogo_produto_poc/app/modules/carrinho/store/carrinho_store.dart';
-import 'package:catalogo_produto_poc/app/modules/usuario/cubit/usuario_controller.dart';
+import 'package:catalogo_produto_poc/app/modules/usuario/store/usuario_store.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -83,8 +82,8 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
       drawer: WidgetDrawer(
-        userName: context.read<UsuarioController>().user.displayName.toString(),
-        userEmail: context.read<UsuarioController>().user.email ?? '',
+        userName: context.read<UsuarioStore>().user.displayName.toString(),
+        userEmail: context.read<UsuarioStore>().user.email ?? '',
       ),
       body: SafeArea(
         child: Column(
