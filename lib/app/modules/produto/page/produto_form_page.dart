@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:provider/provider.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:validatorless/validatorless.dart';
 import 'package:catalogo_produto_poc/app/core/ui/messages.dart';
 import 'package:catalogo_produto_poc/app/core/ui/functions.dart';
 import 'package:catalogo_produto_poc/app/core/models/produto.dart';
 import 'package:catalogo_produto_poc/app/core/widget/widget_loading_page.dart';
 import 'package:catalogo_produto_poc/app/core/widget/widget_text_form_field.dart';
-import 'package:catalogo_produto_poc/app/modules/produto/cubit/produto_controller.dart';
+import 'package:catalogo_produto_poc/app/modules/produto/store/produto_store.dart';
 import 'package:currency_text_input_formatter/currency_text_input_formatter.dart';
 import 'package:catalogo_produto_poc/app/modules/produto/page/produto_foto_grid.dart';
 import 'package:catalogo_produto_poc/app/modules/produto/page/produto_calculadora_preco_page.dart';
-import 'package:catalogo_produto_poc/app/modules/produto/cubit/produto_state.dart';
 
 class ProdutoFormPage extends StatefulWidget {
   const ProdutoFormPage({super.key});
@@ -20,6 +20,7 @@ class ProdutoFormPage extends StatefulWidget {
 }
 
 class _ProdutoFormPageState extends State<ProdutoFormPage> {
+  ProdutoStore? _produtoStore;
   bool _isLoading = false;
   Map<String, dynamic> _formData = <String, dynamic>{};
   final List<String> _fotos = [];
@@ -118,13 +119,26 @@ class _ProdutoFormPageState extends State<ProdutoFormPage> {
     final formValid = _formKey.currentState?.validate() ?? false;
     if (formValid) {
       _formKey.currentState?.save();
-      await context.read<ProdutoController>().save(_formData);
+      try {
+        await _produtoStore?.save(_formData);
+      } catch (e) {
+        print('Erro no save: $e');
+      }
     }
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+
+    try {
+      _produtoStore = context.read<ProdutoStore>();
+      // Resetar o estado para um novo formulário
+      _produtoStore!.success = false;
+      _produtoStore!.error = null;
+    } catch (e) {
+      print('Erro ao inicializar ProdutoStore: $e');
+    }
 
     if (_formData.isEmpty) {
       final arg = ModalRoute.of(context)?.settings.arguments;
@@ -166,20 +180,33 @@ class _ProdutoFormPageState extends State<ProdutoFormPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<ProdutoController, ProdutoState>(
-      listener: (context, state) {
-        _isLoading = state.isLoading;
-        if (state.error != null && state.error!.isNotEmpty) {
-          Messages.of(context).showError(state.error!);
+    return Observer(
+      builder: (_) {
+        // Verificar se a store está disponível
+        if (_produtoStore == null) {
+          return const Scaffold(
+            body: Center(child: CircularProgressIndicator()),
+          );
         }
-        // Se não está carregando e não há erro, fecha a tela após salvar
-        if (!state.isLoading &&
-            state.error == null &&
+        // Atualizar estado de loading
+        _isLoading = _produtoStore!.isLoading;
+
+        // Mostrar erro se existir
+        if (_produtoStore!.hasError) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            Messages.of(context).showError(_produtoStore!.error!);
+          });
+        }
+
+        // Se não está carregando e foi bem-sucedido, fecha a tela
+        if (!_produtoStore!.isLoading &&
+            _produtoStore!.success &&
             ModalRoute.of(context)?.isCurrent == true) {
-          Navigator.of(context).pop();
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            Navigator.of(context).pop();
+          });
         }
-      },
-      builder: (context, state) {
+
         return Scaffold(
           backgroundColor: Colors.white,
           body: _isLoading

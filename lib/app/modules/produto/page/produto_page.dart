@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:provider/provider.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:catalogo_produto_poc/app/core/ui/messages.dart';
 import 'package:catalogo_produto_poc/app/core/models/produto.dart';
 import 'package:catalogo_produto_poc/app/core/constants/rotas.dart';
 import 'package:catalogo_produto_poc/app/core/widget/widget_loading_page.dart';
 import 'package:catalogo_produto_poc/app/modules/produto/page/produto_list.dart';
 import 'package:catalogo_produto_poc/app/modules/produto/page/produto_grid.dart';
-import 'package:catalogo_produto_poc/app/modules/produto/cubit/produto_controller.dart';
-import 'package:catalogo_produto_poc/app/modules/produto/cubit/produto_state.dart';
+import 'package:catalogo_produto_poc/app/modules/produto/store/produto_store.dart';
 
 enum ProdutoPageMode { list, grid }
 
@@ -26,31 +26,36 @@ class ProdutoPage extends StatefulWidget {
 }
 
 class _ProdutoPageState extends State<ProdutoPage> {
+  late ProdutoStore _produtoStore;
+
   @override
   void initState() {
     super.initState();
+    _produtoStore = context.read<ProdutoStore>();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<ProdutoController>().load();
+      _produtoStore.load();
     });
   }
 
-  List<Produto> _produtos(ProdutoState state) {
-    final produtos = List<Produto>.from(state.produtos);
-    produtos.sort(
+  List<Produto> _produtos(List<Produto> produtos) {
+    final produtosList = List<Produto>.from(produtos);
+    produtosList.sort(
       (a, b) => a.nome.toUpperCase().compareTo(b.nome.toUpperCase()),
     );
-    return produtos;
+    return produtosList;
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<ProdutoController, ProdutoState>(
-      listener: (context, state) {
-        if (state.error != null && state.error!.isNotEmpty) {
-          Messages.of(context).showError(state.error!);
+    return Observer(
+      builder: (_) {
+        // Mostrar erro se existir
+        if (_produtoStore.hasError) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            Messages.of(context).showError(_produtoStore.error!);
+          });
         }
-      },
-      builder: (context, state) {
+
         return Scaffold(
           backgroundColor: Theme.of(context).canvasColor,
           appBar: widget._comAppBar
@@ -83,15 +88,15 @@ class _ProdutoPageState extends State<ProdutoPage> {
                 )
               : null,
           body: SafeArea(
-            child: state.isLoading
+            child: _produtoStore.isLoading
                 ? WidgetLoadingPage(
                     label: 'Carregando...',
                     labelColor: Theme.of(context).colorScheme.primary,
                     backgroundColor: Theme.of(context).canvasColor,
                   )
                 : widget._produtoPageMode == ProdutoPageMode.list
-                ? ProdutoList(produtos: _produtos(state))
-                : ProdutoGrid(produtos: _produtos(state)),
+                ? ProdutoList(produtos: _produtos(_produtoStore.produtos))
+                : ProdutoGrid(produtos: _produtos(_produtoStore.produtos)),
           ),
           floatingActionButton: widget._produtoPageMode == ProdutoPageMode.list
               ? FloatingActionButton(

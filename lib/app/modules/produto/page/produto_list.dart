@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:catalogo_produto_poc/app/core/models/produto.dart';
 import 'package:catalogo_produto_poc/app/core/widget/widget_pesquisa.dart';
 import 'package:catalogo_produto_poc/app/modules/produto/page/produto_list_item.dart';
-import 'package:catalogo_produto_poc/app/modules/produto/cubit/produto_controller.dart';
+import 'package:catalogo_produto_poc/app/modules/produto/store/produto_store.dart';
 import 'package:catalogo_produto_poc/app/core/widget/widget_registro_nao_encontrado_page.dart';
 
 class ProdutoList extends StatefulWidget {
@@ -20,7 +20,7 @@ class _ProdutoListState extends State<ProdutoList> {
   List<Produto> produtos = [];
 
   Future<void> _refresh(BuildContext context) {
-    return context.read<ProdutoController>().load();
+    return context.read<ProdutoStore>().load();
   }
 
   void _onSearch(String value) {
