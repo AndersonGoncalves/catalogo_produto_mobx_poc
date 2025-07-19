@@ -5,14 +5,15 @@ Aplicativo de cadastro e gerenciamento de produtos com possibilidadede inclusão
 ## 📚 Descrição
 
 Este app permite que usuários cadastrem, visualizem e gerenciem produtos. É possível adicionar até três fotos para cada produto e o acesso do usuário ao app pode ser feito de forma anônima ou autenticando-se via e-mail. O usuário também pode incluir os produtos no carrinho e finalizar uma compra. Todos os dados de produtos e autenticação são gerenciados via Firebase.
-Esse app utiliza o Bloc para gerenciar estados utilizando Cubit.
+Esse app utiliza o MobX para gerenciar estados.
 
 ## 🚀 Tecnologias Utilizadas
 
 - *Frontend:*  
   - [Flutter](https://flutter.dev/)  
   - [Dart](https://dart.dev/)
-  - [Bloc](https://pub.dev/packages/bloc)
+  - [Provider](https://pub.dev/packages/provider)
+  - [MobX](https://pub.dev/packages/mobx)
 - *Backend:*  
   - [Realtime Database](https://firebase.google.com/products/realtime-database) (armazenamento dos produtos)
   - [Firebase Authentication](https://firebase.google.com/products/auth) (autenticação anônima e por e-mail)  

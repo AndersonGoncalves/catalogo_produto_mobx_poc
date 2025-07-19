@@ -127,7 +127,7 @@ class _WidgetAboutPageState extends State<WidgetAboutPage> {
                         ],
                       ),
                       Text(
-                        'Este app permite que usuários cadastrem, visualizem e gerenciem produtos. É possível adicionar até três fotos para cada produto e o acesso do usuário ao app pode ser feito de forma anônima ou autenticando-se via e-mail. O usuário também pode incluir os produtos no carrinho e finalizar uma compra. Todos os dados de produtos e autenticação são gerenciados via Firebase. Esse app utiliza o Bloc para gerenciar estados utilizando Cubit.',
+                        'Este app permite que usuários cadastrem, visualizem e gerenciem produtos. É possível adicionar até três fotos para cada produto e o acesso do usuário ao app pode ser feito de forma anônima ou autenticando-se via e-mail. O usuário também pode incluir os produtos no carrinho e finalizar uma compra. Todos os dados de produtos e autenticação são gerenciados via Firebase. Esse app utiliza o MobX para gerenciar estados.',
                         style: TextStyle(
                           fontSize: 14,
                           color: context.primaryColor,
@@ -210,11 +210,31 @@ class _WidgetAboutPageState extends State<WidgetAboutPage> {
                         child: InkWell(
                           onTap: () {
                             UrlLauncher.openUrl(
-                              'https://pub.dev/packages/bloc',
+                              'https://pub.dev/packages/provider',
                             );
                           },
                           child: Text(
-                            '1.3 - Bloc (Gerenciamento de Estado)',
+                            '1.3 - Provider (Gerenciamento de Estado)',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: context.primaryColor,
+                              // decoration: TextDecoration.underline,
+                            ),
+                            textAlign: TextAlign.justify,
+                          ),
+                        ),
+                      ),
+
+                      Padding(
+                        padding: const EdgeInsets.only(top: 7, left: 10),
+                        child: InkWell(
+                          onTap: () {
+                            UrlLauncher.openUrl(
+                              'https://pub.dev/packages/mobx',
+                            );
+                          },
+                          child: Text(
+                            '1.4 - MobX (Gerenciamento de Estado)',
                             style: TextStyle(
                               fontSize: 14,
                               color: context.primaryColor,
