@@ -4,6 +4,8 @@ import 'package:catalogo_produto_poc/app/core/models/carrinho.dart';
 import 'package:catalogo_produto_poc/app/services/carrinho/carrinho_service.dart';
 
 part 'carrinho_store.g.dart';
+// flutter packages pub run build_runner watch
+// flutter packages pub run build_runner build --delete-conflicting-outputs
 
 class CarrinhoStore = _CarrinhoStore with _$CarrinhoStore;
 

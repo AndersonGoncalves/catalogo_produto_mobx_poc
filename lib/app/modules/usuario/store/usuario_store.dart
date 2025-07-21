@@ -4,6 +4,8 @@ import 'package:catalogo_produto_poc/app/core/exceptions/auth_exception.dart';
 import 'package:catalogo_produto_poc/app/services/usuario/usuario_service_impl.dart';
 
 part 'usuario_store.g.dart';
+// flutter packages pub run build_runner watch
+// flutter packages pub run build_runner build --delete-conflicting-outputs
 
 class UsuarioStore = _UsuarioStore with _$UsuarioStore;
 

@@ -3,6 +3,8 @@ import 'package:catalogo_produto_poc/app/core/models/produto.dart';
 import 'package:catalogo_produto_poc/app/services/produto/produto_service.dart';
 
 part 'produto_store.g.dart';
+// flutter packages pub run build_runner watch
+// flutter packages pub run build_runner build --delete-conflicting-outputs
 
 class ProdutoStore = _ProdutoStore with _$ProdutoStore;
 
