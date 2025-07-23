@@ -29,12 +29,88 @@ void main() {
       produtoRepository: produtoRepository,
     );
 
-    when(() => produtoRepository.get()).thenAnswer((_) async {
-      return produtoRepository.add(
-        Produto(id: '1', dataCadastro: DateTime.now(), nome: 'Malbec'),
-      );
-    });
-    service.get();
+    when(() => produtoRepository.produtos).thenReturn([
+      Produto(id: '1', dataCadastro: DateTime.now(), nome: 'Malbec'),
+    ]);
+    when(() => produtoRepository.get()).thenAnswer((_) async {});
+
+    await service.get();
     expect(service.produtos.length, 1);
+  });
+
+  test('deve adicionar produto corretamente', () {
+    ProdutoServiceImpl service = ProdutoServiceImpl(
+      produtoRepository: produtoRepository,
+    );
+
+    final produto = Produto(
+      id: '1',
+      dataCadastro: DateTime.now(),
+      nome: 'Teste',
+    );
+    when(() => produtoRepository.add(produto)).thenReturn(produto);
+
+    service.add(produto);
+    verify(() => produtoRepository.add(produto)).called(1);
+  });
+
+  test('deve fazer post do produto corretamente', () async {
+    ProdutoServiceImpl service = ProdutoServiceImpl(
+      produtoRepository: produtoRepository,
+    );
+
+    final produto = Produto(
+      id: '1',
+      dataCadastro: DateTime.now(),
+      nome: 'Teste',
+    );
+    when(() => produtoRepository.post(produto)).thenAnswer((_) async {});
+
+    await service.post(produto);
+    verify(() => produtoRepository.post(produto)).called(1);
+  });
+
+  test('deve fazer patch do produto corretamente', () async {
+    ProdutoServiceImpl service = ProdutoServiceImpl(
+      produtoRepository: produtoRepository,
+    );
+
+    final produto = Produto(
+      id: '1',
+      dataCadastro: DateTime.now(),
+      nome: 'Teste',
+    );
+    when(() => produtoRepository.patch(produto)).thenAnswer((_) async {});
+
+    await service.patch(produto);
+    verify(() => produtoRepository.patch(produto)).called(1);
+  });
+
+  test('deve deletar produto corretamente', () async {
+    ProdutoServiceImpl service = ProdutoServiceImpl(
+      produtoRepository: produtoRepository,
+    );
+
+    final produto = Produto(
+      id: '1',
+      dataCadastro: DateTime.now(),
+      nome: 'Teste',
+    );
+    when(() => produtoRepository.delete(produto)).thenAnswer((_) async {});
+
+    await service.delete(produto);
+    verify(() => produtoRepository.delete(produto)).called(1);
+  });
+
+  test('deve salvar dados do mapa corretamente', () async {
+    ProdutoServiceImpl service = ProdutoServiceImpl(
+      produtoRepository: produtoRepository,
+    );
+
+    final map = {'id': '1', 'nome': 'Teste'};
+    when(() => produtoRepository.save(map)).thenAnswer((_) async {});
+
+    await service.save(map);
+    verify(() => produtoRepository.save(map)).called(1);
   });
 }
