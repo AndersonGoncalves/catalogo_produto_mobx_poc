@@ -14,6 +14,7 @@ Esse app utiliza o MobX para gerenciar estados.
   - [Dart](https://dart.dev/)
   - [Provider](https://pub.dev/packages/provider)
   - [MobX](https://pub.dev/packages/mobx)
+  - [http](https://pub.dev/packages/http)
 - *Backend:*  
   - [Realtime Database](https://firebase.google.com/products/realtime-database) (armazenamento dos produtos)
   - [Firebase Authentication](https://firebase.google.com/products/auth) (autenticação anônima e por e-mail)  
@@ -74,8 +75,8 @@ Cada módulo representa uma área da aplicação, usuário, produto e carrinho)
 
 1. *Clone este repositório*
    bash
-   git clone https://github.com/AndersonGoncalves/catalogo_produto_bloc_cubit_poc.git
-   cd catalogo_produto_bloc_cubit_poc   
+   git clone https://github.com/AndersonGoncalves/catalogo_produto_mobx_poc.git
+   cd catalogo_produto_mobx_poc   
 
 2. *Instale as dependências*
    bash
